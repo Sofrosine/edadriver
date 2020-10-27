@@ -10,18 +10,15 @@ const CardRequestOrder = ({item}) => {
     <TouchableOpacity
       onPress={() =>
         item.status === 'pending'
-          ? navigation.navigate('CreateOrder2', {
-              request_order_id: item.id,
-              item,
+          ? navigation.navigate('Passing', {
+              id: item.id,
             })
           : {}
       }
       style={styles.container}>
       <Text style={styles.p1MediumPrimary}>Request Order ID: {item.id}</Text>
       <Gap height={8} />
-      <Text style={styles.p1RegularBlack}>
-        Total Amount: {item.total_amount}
-      </Text>
+      <Text style={styles.p1RegularBlack}>ID Driver: {item.requester_id}</Text>
       <Gap height={8} />
       <Text style={styles.p1RegularBlack}>
         Status: <Text style={styles.p1MediumSecondary}>{item.status}</Text>

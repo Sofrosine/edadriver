@@ -1,7 +1,10 @@
+import {CommonActions} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Image,
+  Linking,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -18,6 +21,7 @@ import {
   Input,
   ListDetailOrder,
   Navbar,
+  NotificationAlert,
   UploadButton,
 } from '../../components';
 import {
@@ -40,6 +44,21 @@ const Detail = ({route, navigation}) => {
   const [update, setUpdate] = useState(false);
   const {details} = data;
   const dispatch = useDispatch();
+  const {showNotificationAlert, notificationTitle} = useSelector(
+    (state) => state.showNotificationAlertReducer,
+  );
+
+  const openMap = () => {
+    var scheme =
+      Platform.OS === 'ios'
+        ? 'http://maps.apple.com/maps?daddr='
+        : 'http://maps.google.com/maps?daddr=';
+    var url =
+      scheme +
+      `${Number(data.sender_latitude)},${Number(data.sender_longitude)}`;
+    console.log('urur', url);
+    Linking.openURL(url);
+  };
 
   const handlePickUp = () => {
     if (isMore) {
@@ -66,7 +85,7 @@ const Detail = ({route, navigation}) => {
           'product_image_id',
           uploadImageReducer.dataProductImage.id,
         );
-        dispatch(pickUpAction(formData, navigation));
+        dispatch(pickUpAction(formData, navigation, CommonActions));
       }
     } else {
       if (!uploadImageReducer.data.url) {
@@ -75,6 +94,7 @@ const Detail = ({route, navigation}) => {
         const formData = new FormData();
         formData.append('id', id);
         formData.append('image_id', uploadImageReducer.data.id);
+        formData.append('hasMoreItem', 0);
         dispatch(pickUpAction(formData, navigation));
       }
     }
@@ -102,190 +122,198 @@ const Detail = ({route, navigation}) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.pages}>
-      <Navbar
-        onPress={() => {
-          dispatch(resetUploadImageAction());
-          navigation.navigate('Home');
-        }}
-        title="Detail Order"
-        type="back"
-      />
-      <View style={styles.content}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Gap height={24} />
-          <View style={styles.rowCenterBetween}>
-            {data.details && details && (
-              <>
-                <View style={{opacity: 0}}>
-                  <Badge status={data.order_status} />
-                </View>
-                <Text style={styles.p2GrayRegular}>{data.created_at}</Text>
-                <Badge status={data.order_status} />
-              </>
-            )}
-          </View>
-          <Gap height={24} />
-          <View style={[styles.rowCenter, styles.avatarContainer]}>
-            <Image source={IMGMenuBackground} style={styles.avatar} />
-            <Gap width={8} />
-            <View>
-              <Text style={styles.p2GrayRegular}>Nama Driver</Text>
-              <Gap height={4} />
-              <Text style={styles.p1Bold}>Ridwan M.</Text>
-            </View>
-          </View>
-          <Gap height={16} />
-          <ListDetailOrder
-            title="Nama Penerima"
-            subtitle={data.receiver_name}
-          />
-          <Gap height={16} />
-          <ListDetailOrder
-            title="Nomor Handphone"
-            subtitle={data.receiver_phone}
-          />
-          <Gap height={16} />
-          <ListDetailOrder
-            title="Alamat Penerima"
-            subtitle={data.receiver_address}
-          />
-          <Gap height={16} />
-          <ListDetailOrder
-            title="Nama Barang"
-            subtitle={details && details[0].product_name}
-          />
-          <Gap height={16} />
-          <ListDetailOrder
-            title="Deskripsi Barang"
-            subtitle={details && details[0].product_description}
-          />
-          <Gap height={16} />
-          <ListDetailOrder
-            title="Harga"
-            subtitle={details && details[0].price}
-          />
-          <Gap height={16} />
-          <Text style={styles.p2GrayRegular}>Foto Barang</Text>
-          <Gap height={8} />
-          <Image
-            source={
-              details
-                ? {uri: details[0].image.url}
-                : {
-                    uri:
-                      'https://d2l12sz4ewcavz.cloudfront.net/assets/boxes/oversized_items/oversized_02-155efcabd68291d16f8fbb2376dea0dd69219898688e934490e21f6cb50eba30.jpg',
-                  }
-            }
-            style={styles.image}
-          />
-          <Gap height={16} />
-          {data.order_status === 'completed' && (
-            <>
-              <Text style={styles.p2GrayRegular}>Foto Bukti Pengiriman</Text>
-              <Gap height={8} />
-              <Image
-                source={
-                  details
-                    ? {uri: details[0].image.url}
-                    : {
-                        uri:
-                          'https://d2l12sz4ewcavz.cloudfront.net/assets/boxes/oversized_items/oversized_02-155efcabd68291d16f8fbb2376dea0dd69219898688e934490e21f6cb50eba30.jpg',
-                      }
-                }
-                style={styles.image}
-              />
-              <Gap height={16} />
-            </>
-          )}
-          <Gap height={24} />
-          {data.order_status === 'pending' && (
-            <>
-              <Button
-                text="Lanjutkan"
-                onPress={() =>
-                  navigation.navigate('CreateOrder2', {
-                    request_order_id: data.request_order_id.id,
-                    item: data.request_order_id,
-                  })
-                }
-              />
-              <Gap height={24} />
-            </>
-          )}
-          {data.order_status === 'going_to_pick_up' && (
-            <>
-              <Text style={styles.p1Bold}>Upload Foto Barang *</Text>
-              <Gap height={8} />
-              <UploadButton type="product-pick-up" />
-              <Gap height={24} />
-              <TouchableOpacity
-                onPress={() => setMore(!isMore)}
-                style={styles.rowCenter}>
-                <View style={isMore ? styles.radioOn : styles.radioOff} />
-                <Gap width={4} />
-                <Text style={styles.p2GrayRegular}>Ada Barang Tambahan?</Text>
-              </TouchableOpacity>
-              {isMore && (
+    <>
+      {showNotificationAlert && <NotificationAlert title={notificationTitle} />}
+
+      <SafeAreaView style={styles.pages}>
+        <Navbar
+          onPress={() => {
+            dispatch(resetUploadImageAction());
+            navigation.navigate('Home');
+          }}
+          title="Detail Order"
+          type="back"
+        />
+        <View style={styles.content}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Gap height={24} />
+            <View style={styles.rowCenterBetween}>
+              {data.details && details && (
                 <>
-                  <Gap height={24} />
-                  <Input
-                    keyboardType="number-pad"
-                    onChangeText={(val) => setItemForm('nominal', val)}
-                    theme="light"
-                    label="Nominal *"
-                    placeholder="Masukkan jumlah nominal"
-                  />
-                  <Gap height={8} />
-                  <Input
-                    onChangeText={(val) => setItemForm('description', val)}
-                    theme="light"
-                    label="Deskripsi *"
-                    type="description"
-                    placeholder="Masukkan Deskripsi Barang"
-                  />
-                  <Gap height={24} />
-                  <Text style={styles.p1Bold}>
-                    Upload Foto Barang Tambahan *
-                  </Text>
-                  <Gap height={8} />
-                  <UploadButton
-                    type="product-image"
-                    sectionType="product-image"
-                  />
+                  <View style={{opacity: 0}}>
+                    <Badge status={data.order_status} />
+                  </View>
+                  <Text style={styles.p2GrayRegular}>{data.created_at}</Text>
+                  <Badge status={data.order_status} />
                 </>
               )}
-              <Gap height={24} />
-            </>
-          )}
-          {data.order_status === 'pick_up_by_driver' && (
-            <View>
-              <Text style={styles.p1Bold}>Upload bukti pengiriman *</Text>
-              <Gap height={8} />
-              <UploadButton type="product-delivered" />
+            </View>
+            <Gap height={24} />
+            <View style={[styles.rowCenter, styles.avatarContainer]}>
+              <Image source={IMGMenuBackground} style={styles.avatar} />
+              <Gap width={8} />
+              <View>
+                <Text style={styles.p2GrayRegular}>Nama Driver</Text>
+                <Gap height={4} />
+                <Text style={styles.p1Bold}>Ridwan M.</Text>
+              </View>
+            </View>
+            <Gap height={16} />
+            <ListDetailOrder
+              title="Nama Penerima"
+              subtitle={data.receiver_name}
+            />
+            <Gap height={16} />
+            <ListDetailOrder
+              title="Nomor Handphone"
+              subtitle={data.receiver_phone}
+            />
+            <Gap height={16} />
+            <ListDetailOrder
+              title="Alamat Penerima"
+              subtitle={data.receiver_address}
+            />
+            <Gap height={16} />
+            <Button onPress={openMap} type="nude" text="Lihat Lokasi" />
+            <Gap height={16} />
+            <ListDetailOrder
+              title="Nama Barang"
+              subtitle={details && details[0].product_name}
+            />
+            <Gap height={16} />
+            <ListDetailOrder
+              title="Deskripsi Barang"
+              subtitle={details && details[0].product_description}
+            />
+            <Gap height={16} />
+            <ListDetailOrder
+              title="Harga"
+              subtitle={details && details[0].price}
+            />
+            <Gap height={16} />
+            <Text style={styles.p2GrayRegular}>Foto Barang</Text>
+            <Gap height={8} />
+            <Image
+              source={
+                details
+                  ? {uri: details[0].image.url}
+                  : {
+                      uri:
+                        'https://d2l12sz4ewcavz.cloudfront.net/assets/boxes/oversized_items/oversized_02-155efcabd68291d16f8fbb2376dea0dd69219898688e934490e21f6cb50eba30.jpg',
+                    }
+              }
+              style={styles.image}
+            />
+            <Gap height={16} />
+            {/* {data.order_status === 'completed' && (
+              <>
+                <Text style={styles.p2GrayRegular}>Foto Bukti Pengiriman</Text>
+                <Gap height={8} />
+                <Image
+                  source={
+                    details
+                      ? {uri: details[0].image.url}
+                      : {
+                          uri:
+                            'https://d2l12sz4ewcavz.cloudfront.net/assets/boxes/oversized_items/oversized_02-155efcabd68291d16f8fbb2376dea0dd69219898688e934490e21f6cb50eba30.jpg',
+                        }
+                  }
+                  style={styles.image}
+                />
+                <Gap height={16} />
+              </>
+            )} */}
+            <Gap height={24} />
+            {data.order_status === 'pending' && (
+              <>
+                <Button
+                  text="Lanjutkan"
+                  onPress={() =>
+                    navigation.navigate('CreateOrder2', {
+                      request_order_id: data.request_order_id.id,
+                      item: data.request_order_id,
+                    })
+                  }
+                />
+                <Gap height={24} />
+              </>
+            )}
+            {data.order_status === 'going_to_pick_up' && (
+              <>
+                <Text style={styles.p1Bold}>Upload Foto Barang *</Text>
+                <Gap height={8} />
+                <UploadButton type="product-pick-up" />
+                <Gap height={24} />
+                <TouchableOpacity
+                  onPress={() => setMore(!isMore)}
+                  style={styles.rowCenter}>
+                  <View style={isMore ? styles.radioOn : styles.radioOff} />
+                  <Gap width={4} />
+                  <Text style={styles.p2GrayRegular}>Ada Barang Tambahan?</Text>
+                </TouchableOpacity>
+                {isMore && (
+                  <>
+                    <Gap height={24} />
+                    <Input
+                      keyboardType="number-pad"
+                      onChangeText={(val) => setItemForm('nominal', val)}
+                      theme="light"
+                      label="Nominal *"
+                      placeholder="Masukkan jumlah nominal"
+                    />
+                    <Gap height={8} />
+                    <Input
+                      onChangeText={(val) => setItemForm('description', val)}
+                      theme="light"
+                      label="Deskripsi *"
+                      type="description"
+                      placeholder="Masukkan Deskripsi Barang"
+                    />
+                    <Gap height={24} />
+                    <Text style={styles.p1Bold}>
+                      Upload Foto Barang Tambahan *
+                    </Text>
+                    <Gap height={8} />
+                    <UploadButton
+                      type="product-image"
+                      sectionType="product-image"
+                    />
+                  </>
+                )}
+                <Gap height={24} />
+              </>
+            )}
+            {data.order_status === 'pick_up_by_driver' && (
+              <View>
+                <Text style={styles.p1Bold}>Upload bukti pengiriman *</Text>
+                <Gap height={8} />
+                <UploadButton type="product-delivered" />
+              </View>
+            )}
+          </ScrollView>
+          {data.order_status !== 'completed' && (
+            <View style={{padding: 16}}>
+              <Button
+                onPress={() =>
+                  data.order_status === 'approved'
+                    ? dispatch(goingToPickUpAction(id, navigation))
+                    : data.order_status === 'going_to_pick_up'
+                    ? handlePickUp()
+                    : handleComplete()
+                }
+                text={
+                  data.order_status === 'approved'
+                    ? 'Ambil Order'
+                    : data.order_status === 'going_to_pick_up'
+                    ? 'Ambil Barang'
+                    : 'Selesaikan Order'
+                }
+              />
             </View>
           )}
-        </ScrollView>
-        <View style={{padding: 16}}>
-          <Button
-            onPress={() =>
-              data.order_status === 'approved'
-                ? dispatch(goingToPickUpAction(id, navigation))
-                : data.order_status === 'going_to_pick_up'
-                ? handlePickUp()
-                : handleComplete()
-            }
-            text={
-              data.order_status === 'approved'
-                ? 'Ambil Order'
-                : data.order_status === 'going_to_pick_up'
-                ? 'Ambil Barang'
-                : 'Selesaikan Order'
-            }
-          />
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 };
 

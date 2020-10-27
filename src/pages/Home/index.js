@@ -1,7 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {CardTask, Gap, HomeTabBar, Navbar} from '../../components';
+import {
+  CardTask,
+  Gap,
+  HomeTabBar,
+  Navbar,
+  NotificationAlert,
+} from '../../components';
 import {
   getOrderActiveAction,
   getOrderInactiveAction,
@@ -14,6 +20,9 @@ const Home = ({navigation}) => {
   const [tabBarActive, setTabBar] = useState(true);
   const dispatch = useDispatch();
   const {getOrderReducer} = useSelector((state) => state);
+  const {showNotificationAlert, notificationTitle} = useSelector(
+    (state) => state.showNotificationAlertReducer,
+  );
 
   useEffect(() => {
     setTimeout(() => {
@@ -23,24 +32,65 @@ const Home = ({navigation}) => {
     }, 1000);
   }, [navigation]);
   return (
-    <SafeAreaView style={styles.pages}>
-      <Navbar title="Home" />
-      <View style={styles.content}>
-        <Gap height={16} />
-        <View style={{paddingHorizontal: 16}}>
-          <HomeTabBar setState={setTabBar} isActive={tabBarActive} />
-        </View>
-        <Gap height={16} />
-        <View style={[styles.content]}>
-          {tabBarActive ? (
-            getOrderReducer.activeData &&
-            getOrderReducer.activeData.length > 0 ? (
+    <>
+      {showNotificationAlert && <NotificationAlert title={notificationTitle} />}
+      <SafeAreaView style={styles.pages}>
+        <Navbar title="Home" />
+        <View style={styles.content}>
+          <Gap height={16} />
+          <View style={{paddingHorizontal: 16}}>
+            <HomeTabBar setState={setTabBar} isActive={tabBarActive} />
+          </View>
+          <Gap height={16} />
+          <View style={[styles.content]}>
+            {tabBarActive ? (
+              getOrderReducer.activeData &&
+              getOrderReducer.activeData.length > 0 ? (
+                <FlatList
+                  onEndReached={() =>
+                    dispatch(getOrderPaginationActiveAction())
+                  }
+                  onEndReachedThreshold={0.5}
+                  contentContainerStyle={{paddingHorizontal: 16}}
+                  keyExtractor={(item) => item.id}
+                  data={getOrderReducer.activeData}
+                  renderItem={({item}) => (
+                    <>
+                      <CardTask
+                        name={item.receiver_name}
+                        type={item.order_status}
+                        phone={item.receiver_phone}
+                        location={item.receiver_address}
+                        date={item.created_at}
+                        onPress={() =>
+                          navigation.navigate('Detail', {
+                            id: item.id,
+                          })
+                        }
+                      />
+                      <Gap height={16} />
+                    </>
+                  )}
+                />
+              ) : (
+                <Text
+                  style={[
+                    styles.h6Black,
+                    {textAlign: 'center', marginTop: 20},
+                  ]}>
+                  No active data
+                </Text>
+              )
+            ) : getOrderReducer.inactiveData &&
+              getOrderReducer.inactiveData.length > 0 ? (
               <FlatList
-                onEndReached={() => dispatch(getOrderPaginationActiveAction())}
+                onEndReached={() =>
+                  dispatch(getOrderPaginationInactiveAction())
+                }
                 onEndReachedThreshold={0.5}
                 contentContainerStyle={{paddingHorizontal: 16}}
                 keyExtractor={(item) => item.id}
-                data={getOrderReducer.activeData}
+                data={getOrderReducer.inactiveData}
                 renderItem={({item}) => (
                   <>
                     <CardTask
@@ -62,44 +112,13 @@ const Home = ({navigation}) => {
             ) : (
               <Text
                 style={[styles.h6Black, {textAlign: 'center', marginTop: 20}]}>
-                No active data
+                No inactive data
               </Text>
-            )
-          ) : getOrderReducer.inactiveData &&
-            getOrderReducer.inactiveData.length > 0 ? (
-            <FlatList
-              onEndReached={() => dispatch(getOrderPaginationInactiveAction())}
-              onEndReachedThreshold={0.5}
-              contentContainerStyle={{paddingHorizontal: 16}}
-              keyExtractor={(item) => item.id}
-              data={getOrderReducer.inactiveData}
-              renderItem={({item}) => (
-                <>
-                  <CardTask
-                    name={item.receiver_name}
-                    type={item.order_status}
-                    phone={item.receiver_phone}
-                    location={item.receiver_address}
-                    date={item.created_at}
-                    onPress={() =>
-                      navigation.navigate('Detail', {
-                        id: item.id,
-                      })
-                    }
-                  />
-                  <Gap height={16} />
-                </>
-              )}
-            />
-          ) : (
-            <Text
-              style={[styles.h6Black, {textAlign: 'center', marginTop: 20}]}>
-              No inactive data
-            </Text>
-          )}
+            )}
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 };
 

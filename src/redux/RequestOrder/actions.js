@@ -24,11 +24,11 @@ export const requestOrderAction = () => {
   return async (dispatch) => {
     dispatch(requestOrder());
     try {
-      const apiReq = await api('get', 'request-order');
-      console.log('apireq get request order', apiReq);
+      const apiReq = await api('get', 'order/list-request-switch-driver');
+      console.log('apireq get list request order', apiReq);
       dispatch(requestOrderSuccess(apiReq.data.data));
     } catch (error) {
-      console.log('error get request order', error);
+      console.log('error get list request order', error);
       dispatch(requestOrderFailed(error));
     }
   };

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "404942169258",
+    "firebase_url": "https://edadriver-d9b02.firebaseio.com",
+    "project_id": "edadriver-d9b02",
+    "storage_bucket": "edadriver-d9b02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404942169258:android:7efa8858a365ce645f1cd3",
+        "android_client_info": {
+          "package_name": "com.edadriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "404942169258-r2f26nt37r90m7rjmk2tk2en44ou6dps.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6qyr_e9sJIxUFMW7xDYivvslB6rR1UV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "404942169258-r2f26nt37r90m7rjmk2tk2en44ou6dps.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

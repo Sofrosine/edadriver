@@ -33,7 +33,7 @@ const getUser = async () => {
   };
 };
 
-export const pickUpAction = (formData, navigation) => {
+export const pickUpAction = (formData, navigation, CommonActions) => {
   return async (dispatch) => {
     console.log('ini form', formData);
     const dataUser = await getUser();
@@ -65,9 +65,17 @@ export const pickUpAction = (formData, navigation) => {
               console.log('res post pickup', apiReq);
               dispatch(pickUpSuccess(apiReq.data.data));
               dispatch(setLoadingAction(false));
-              dispatch(getOrderActiveAction());
               dispatch(resetUploadImageAction());
               navigation.replace('Home');
+              // navigation.reset(
+              //   CommonActions.reset({
+              //     index: 0,
+              //     routes: [{name: 'Home'}],
+              //   }),
+              // );
+              setTimeout(() => {
+                dispatch(getOrderActiveAction());
+              }, 1000);
               ToastAndroid.show('Berhasil mengambil barang', 2000);
             } catch (error) {
               console.log('error post pickup', error);
@@ -113,11 +121,13 @@ export const completeAction = (formData, navigation) => {
               );
               console.log('res post complete', apiReq);
               dispatch(pickUpSuccess(apiReq.data.data));
-              dispatch(setLoadingAction(false));
-              dispatch(getOrderActiveAction());
+              dispatch(setLoadingAction(false)); 
               dispatch(resetUploadImageAction());
               navigation.replace('Home');
               ToastAndroid.show('Berhasil menyelesaikan order', 2000);
+              setTimeout(() => {
+                dispatch(getOrderActiveAction());
+              }, 1000);
             } catch (error) {
               console.log('error post complete', error);
               dispatch(pickUpFailed(error));

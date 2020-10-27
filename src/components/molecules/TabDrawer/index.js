@@ -12,6 +12,7 @@ const TabDrawer = ({text, isActive, icon, routeName, logout}) => {
   const dispatch = useDispatch();
   const handleNavigation = () => {
     if (!logout) {
+      console.log('rrr', routeName)
       navigation.navigate(routeName);
     } else {
       AsyncStorage.clear();

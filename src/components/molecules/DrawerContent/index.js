@@ -9,12 +9,7 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {
-  ICContactWhite,
-  ICHomeWhite,
-  ICInvoiceWhite,
-  ICLogoutWhite,
-} from '../../../assets';
+import {ICHomeWhite, ICInvoiceWhite, ICLogoutWhite} from '../../../assets';
 import {colors, fonts, getData} from '../../../utils';
 import {Gap} from '../../atoms';
 import TabDrawer from '../TabDrawer';
@@ -23,7 +18,7 @@ const DrawerContent = (props) => {
   const [isLoading, setLoading] = useState(true);
   const routeActiveIndex = props.state.index;
   const routeActiveName = props.state.routeNames[routeActiveIndex];
-  const listIcon = [ICHomeWhite, ICContactWhite, ICInvoiceWhite];
+  const listIcon = [ICHomeWhite, ICInvoiceWhite];
   const [user, setUser] = useState({});
   const handleGetUser = async () => {
     const getUser = await getData('@user_data');

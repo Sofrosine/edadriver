@@ -1,5 +1,6 @@
 import {Alert} from 'react-native';
 import {api} from '../../api';
+import {getOrderActiveAction} from '../GetOrder/actions';
 import {setLoadingAction} from '../Loading/actions';
 
 const {
@@ -46,6 +47,9 @@ export const goingToPickUpAction = (id, navigation) => {
               dispatch(goingToPickUpSuccess(apiReq.data.data));
               dispatch(setLoadingAction(false));
               navigation.replace('Home');
+              setTimeout(() => {
+                dispatch(getOrderActiveAction());
+              }, 1000);
             } catch (error) {
               console.log('error post going to pickup', error);
               dispatch(goingToPickUpFailed(error));

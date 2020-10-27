@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 import addCustomerReducer from './AddCustomer/reducers';
 import addOrderReducer from './AddOrder/reducers';
 import autoCompleteReducer from './AutoComplete/reducers';
@@ -21,6 +21,11 @@ import requestOrderReducer from './RequestOrder/reducers';
 import requestVerificationReducer from './RequestVerification/reducers';
 import searchCustomerReducer from './SearchCustomer/reducers';
 import uploadImageReducer from './UploadImage/reducers';
+import showNotificationAlertReducer from './ShowNotificationAlert/reducers';
+import requestDriverReducer from './RequestDriver/reducers';
+import acceptRequestDriverReducer from './AcceptRequest/reducers';
+import declineRequestDriverReducer from './DecilneRequest/reducers';
+import getAvailableDriverReducer from './GetAvailableDriver/reducers';
 
 const appReducer = combineReducers({
   loginReducer,
@@ -45,6 +50,11 @@ const appReducer = combineReducers({
   invoiceReducer,
   requestOrderReducer,
   goingToPickUpReducer,
+  showNotificationAlertReducer,
+  requestDriverReducer,
+  acceptRequestDriverReducer,
+  declineRequestDriverReducer,
+  getAvailableDriverReducer,
 });
 
 const rootReducer = (state, action) => {

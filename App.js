@@ -1,12 +1,14 @@
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Provider, useSelector} from 'react-redux';
+import {NotificationAlert} from './src/components';
 import Loading from './src/components/molecules/Loading';
 import configureStore from './src/redux/store';
 import Routes from './src/routes';
 
 const MainApp = () => {
   const {loading} = useSelector((state) => state.loadingReducer);
+
   return (
     <>
       <NavigationContainer>
