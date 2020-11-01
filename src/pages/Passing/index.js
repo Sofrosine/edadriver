@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Linking,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {useDispatch, useSelector} from 'react-redux';
 import {IMGMenuBackground} from '../../assets';
@@ -15,6 +23,7 @@ import {
   acceptRequestDriverAction,
   declineRequestDriverAction,
   getDetailOrderAction,
+  getDetailRequestSwitchOrderAction,
   resetUploadImageAction,
 } from '../../redux/actions';
 import {colors, fonts} from '../../utils';
@@ -22,10 +31,10 @@ import {colors, fonts} from '../../utils';
 const Passing = ({route, navigation}) => {
   const [update, setUpdate] = useState(false);
   const {id} = route.params;
+  const {data} = useSelector((state) => state.detailRequestSwitchOrderReducer);
   const {showNotificationAlert, notificationTitle} = useSelector(
     (state) => state.showNotificationAlertReducer,
   );
-  const {data} = useSelector((state) => state.detailOrderReducer);
   const {details} = data;
   const dispatch = useDispatch();
 
@@ -40,8 +49,22 @@ const Passing = ({route, navigation}) => {
     dispatch(declineRequestDriverAction(formData, navigation));
   };
 
+  const openMap = () => {
+    var scheme =
+      Platform.OS === 'ios'
+        ? 'http://maps.apple.com/maps?daddr='
+        : 'http://maps.google.com/maps?daddr=';
+    var url =
+      scheme +
+      `${Number(data.order.sender_latitude)},${Number(
+        data.order.sender_longitude,
+      )}`;
+    console.log('urur', url);
+    Linking.openURL(url);
+  };
+
   useEffect(() => {
-    dispatch(getDetailOrderAction(id));
+    dispatch(getDetailRequestSwitchOrderAction(id));
     const yo = setTimeout(() => {
       setUpdate(!update);
     }, 1000);
@@ -81,42 +104,31 @@ const Passing = ({route, navigation}) => {
               <FastImage source={IMGMenuBackground} style={styles.avatar} />
               <Gap width={8} />
               <View>
-                <Text style={styles.p2GrayRegular}>Nama Driver</Text>
+                <Text style={styles.p2GrayRegular}>Nama Requester</Text>
                 <Gap height={4} />
-                <Text style={styles.p1Bold}>Ridwan M.</Text>
+                <Text style={styles.p1Bold}>{data.requester.driver_name}</Text>
               </View>
             </View>
             <Gap height={16} />
             <ListDetailOrder
               title="Nama Penerima"
-              subtitle={data.receiver_name}
+              subtitle={data.order.receiver_name}
             />
             <Gap height={16} />
             <ListDetailOrder
               title="Nomor Handphone"
-              subtitle={data.receiver_phone}
+              subtitle={data.order.receiver_phone}
             />
             <Gap height={16} />
             <ListDetailOrder
               title="Alamat Penerima"
-              subtitle={data.receiver_address}
+              subtitle={data.order.receiver_address}
             />
             <Gap height={16} />
-            <ListDetailOrder
-              title="Nama Barang"
-              subtitle={details && details[0].product_name}
-            />
+            <Button onPress={openMap} type="nude" text="Lihat Lokasi" />
             <Gap height={16} />
-            <ListDetailOrder
-              title="Deskripsi Barang"
-              subtitle={details && details[0].product_description}
-            />
-            <Gap height={16} />
-            <ListDetailOrder
-              title="Harga"
-              subtitle={details && details[0].price}
-            />
-            <Gap height={16} />
+            <ListDetailOrder title="Harga" subtitle={data.order.total_amount} />
+            <Gap height={24} />
             <Button onPress={handleDecline} type="delete" text="Tolak Order" />
             <Gap height={16} />
             <Button onPress={handleAccept} type="edit" text="Ambil Order" />

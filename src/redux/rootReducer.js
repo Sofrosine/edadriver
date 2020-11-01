@@ -26,6 +26,7 @@ import requestDriverReducer from './RequestDriver/reducers';
 import acceptRequestDriverReducer from './AcceptRequest/reducers';
 import declineRequestDriverReducer from './DecilneRequest/reducers';
 import getAvailableDriverReducer from './GetAvailableDriver/reducers';
+import detailRequestSwitchOrderReducer from './DetailRequestSwitchOrder/reducers';
 
 const appReducer = combineReducers({
   loginReducer,
@@ -55,6 +56,7 @@ const appReducer = combineReducers({
   acceptRequestDriverReducer,
   declineRequestDriverReducer,
   getAvailableDriverReducer,
+  detailRequestSwitchOrderReducer,
 });
 
 const rootReducer = (state, action) => {

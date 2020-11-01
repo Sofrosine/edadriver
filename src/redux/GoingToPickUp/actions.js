@@ -1,4 +1,4 @@
-import {Alert} from 'react-native';
+import {Alert, ToastAndroid} from 'react-native';
 import {api} from '../../api';
 import {getOrderActiveAction} from '../GetOrder/actions';
 import {setLoadingAction} from '../Loading/actions';
@@ -20,7 +20,7 @@ const goingToPickUpSuccess = (res) => ({
 
 const goingToPickUpFailed = (error) => ({
   type: GOING_TO_PICKUP_FAILED,
-  payload: {error},
+  payload: {error}, 
 });
 
 export const goingToPickUpAction = (id, navigation) => {
@@ -49,7 +49,8 @@ export const goingToPickUpAction = (id, navigation) => {
               navigation.replace('Home');
               setTimeout(() => {
                 dispatch(getOrderActiveAction());
-              }, 1000);
+              }, 2000);
+              ToastAndroid.show('Berhasil menerima order', 2000);
             } catch (error) {
               console.log('error post going to pickup', error);
               dispatch(goingToPickUpFailed(error));

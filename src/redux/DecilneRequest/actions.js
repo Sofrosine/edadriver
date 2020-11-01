@@ -1,3 +1,9 @@
+import {Alert} from 'react-native';
+import {
+  getOrderActiveAction,
+  getOrderInactiveAction,
+} from '../GetOrder/actions';
+import {setLoadingAction} from '../Loading/actions';
 import {requestOrderAction} from '../RequestOrder/actions';
 
 const {api} = require('../../api');
@@ -22,16 +28,21 @@ const declineRequestDriverFailed = (error) => ({
 
 export const declineRequestDriverAction = (formData, navigation) => {
   return async (dispatch) => {
+    dispatch(setLoadingAction(true));
     dispatch(declineRequestDriver());
     try {
       const apiReq = await api('post', 'order/request-switch-driver', formData);
       console.log('apireq request driver', apiReq);
       dispatch(declineRequestDriverSuccess(apiReq.data));
       dispatch(requestOrderAction());
+      dispatch(getOrderActiveAction());
+      dispatch(getOrderInactiveAction());
       navigation.goBack();
     } catch (error) {
       console.log('error request driver', error);
       dispatch(declineRequestDriverFailed(error));
+      Alert.alert('Terjadi kesalahan, silahkan mencoba beberapa saat lagi');
     }
+    dispatch(setLoadingAction(false));
   };
 };

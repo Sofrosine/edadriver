@@ -21,3 +21,4 @@ export * from './RequestDriver/actions';
 export * from './AcceptRequest/actions';
 export * from './DecilneRequest/actions';
 export * from './GetAvailableDriver/actions';
+export * from './DetailRequestSwitchOrder/actions';
