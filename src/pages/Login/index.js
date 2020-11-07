@@ -52,13 +52,13 @@ const Login = ({navigation}) => {
           />
           <Gap height={6} />
           <Gap height={24} />
-          {loading ? (
+          {/* {loading ? (
             <ActivityIndicator size={32} color={colors.secondary} />
           ) : (
-            <>
-              <Button onPress={handleSubmit} position="center" text="Login" />
-            </>
-          )}
+            <> */}
+          <Button onPress={handleSubmit} position="center" text="Login" />
+          {/* </>
+          )} */}
         </ScrollView>
       </View>
     </SafeAreaView>

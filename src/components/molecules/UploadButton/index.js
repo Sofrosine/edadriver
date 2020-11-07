@@ -5,11 +5,15 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {ICUploadWhite} from '../../../assets';
 import {uploadImageAction} from '../../../redux/actions';
-import {colors} from '../../../utils';
+import {colors, fonts} from '../../../utils';
+import ImageView from 'react-native-image-view';
+import {View} from 'react-native';
+import {Button, Gap} from '../../atoms';
 
 const UploadButton = ({type = 'avatar', sectionType}) => {
   const dispatch = useDispatch();
   const [yo, setYo] = useState('');
+  const [isDetail, setDetail] = useState(false);
   const {uploadImageReducer} = useSelector((state) => state);
   const {data, dataProductImage} = uploadImageReducer;
   const formData = new FormData();
@@ -55,10 +59,42 @@ const UploadButton = ({type = 'avatar', sectionType}) => {
 
   return (
     <>
-      <TouchableOpacity onPress={handleUpload} style={styles.container}>
-        {!data.url && <ICUploadWhite height={20} width={23} />}
-        {data.url && <Image source={{uri: data.url}} style={styles.image} />}
-      </TouchableOpacity>
+      {!data.url && (
+        <TouchableOpacity onPress={handleUpload} style={styles.container}>
+          <ICUploadWhite height={20} width={23} />
+        </TouchableOpacity>
+      )}
+      {data.url && (
+        <View>
+          <ImageView
+            images={[
+              {
+                source: {
+                  uri: data.url,
+                },
+                title: 'Foto Upload',
+                width: 300,
+                height: 200,
+              },
+            ]}
+            imageIndex={0}
+            isVisible={isDetail}
+            animationType="fade"
+            onClose={() => setDetail(false)}
+          />
+          {!isDetail && (
+            <TouchableOpacity onPress={() => setDetail(true)}>
+              <Image source={{uri: data.url}} style={styles.image} />
+            </TouchableOpacity>
+          )}
+          <Gap height={16} />
+          <Button onPress={handleUpload} type="nude" text="Upload Ulang" />
+          {/* <TouchableOpacity onPress={handleUpload}>
+            <Text style={styles.p1Secondary}>Upload Ulang</Text>
+          </TouchableOpacity> */}
+          <Gap height={24} />
+        </View>
+      )}
     </>
   );
 };
@@ -77,5 +113,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 103,
     borderRadius: 4,
+  },
+  p1Secondary: {
+    fontSize: 14,
+    fontFamily: fonts.primary[400],
+    color: colors.secondary,
   },
 });

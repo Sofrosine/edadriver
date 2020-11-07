@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   SafeAreaView,
   StyleSheet,
@@ -10,12 +11,41 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, Gap, Navbar} from '../../components';
-import {getAvailableDriverAction} from '../../redux/actions';
+import {
+  getAvailableDriverAction,
+  requestDriverAction,
+} from '../../redux/actions';
 import {colors, fonts} from '../../utils';
 
-const AvailableDriverList = ({navigation}) => {
+const AvailableDriverList = ({navigation, route}) => {
   const {getAvailableDriverReducer} = useSelector((state) => state);
+  const {id} = route.params;
   const dispatch = useDispatch();
+
+  const handleChoose = (item) => {
+    Alert.alert(
+      'Apakah Anda yakin ingin mengalihkan pesanan?',
+      '',
+      [
+        {
+          text: 'Tidak',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Ya',
+          onPress: async () => {
+            console.log('aiaiai', item);
+            const formData = new FormData();
+            formData.append('driver_id', item.id);
+            formData.append('id', id);
+            dispatch(requestDriverAction(formData, navigation));
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
 
   useEffect(() => {
     dispatch(getAvailableDriverAction());
@@ -40,7 +70,9 @@ const AvailableDriverList = ({navigation}) => {
               onPress={() => dispatch(getAvailableDriverAction())}
             />
           ) : (
-            <TouchableOpacity style={styles.cardContainer}>
+            <TouchableOpacity
+              onPress={() => handleChoose(item)}
+              style={styles.cardContainer}>
               <View style={styles.rowBetweenCenter}>
                 <Text style={styles.p1Primary}>{item.id}</Text>
                 <Text style={styles.p1Primary}>{item.driver_phone}</Text>

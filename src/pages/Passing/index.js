@@ -129,9 +129,13 @@ const Passing = ({route, navigation}) => {
             <Gap height={16} />
             <ListDetailOrder title="Harga" subtitle={data.order.total_amount} />
             <Gap height={24} />
-            <Button onPress={handleDecline} type="delete" text="Tolak Order" />
+            <Button onPress={handleDecline} type="delete" text="Reject Order" />
             <Gap height={16} />
-            <Button onPress={handleAccept} type="edit" text="Ambil Order" />
+            <Button
+              onPress={handleAccept}
+              type="edit"
+              text="Pick Up Order Now"
+            />
           </ScrollView>
         </View>
       </SafeAreaView>

@@ -293,6 +293,20 @@ const Detail = ({route, navigation}) => {
           </ScrollView>
           {data.order_status !== 'completed' && (
             <View style={{padding: 16}}>
+              {data.order_status === 'pick_up_by_driver' && (
+                <View>
+                  <Button
+                    type="edit"
+                    onPress={() =>
+                      navigation.navigate('AvailableDriverList', {
+                        id,
+                      })
+                    }
+                    text="Alihkan ke Driver yang lain"
+                  />
+                  <Gap height={8} />
+                </View>
+              )}
               <Button
                 onPress={() =>
                   data.order_status === 'approved'
@@ -303,10 +317,10 @@ const Detail = ({route, navigation}) => {
                 }
                 text={
                   data.order_status === 'approved'
-                    ? 'Ambil Order'
+                    ? 'Jemput Barang'
                     : data.order_status === 'going_to_pick_up'
-                    ? 'Ambil Barang'
-                    : 'Selesaikan Order'
+                    ? 'Melakukan Pengambilan Barang'
+                    : 'Selesaikan Pesanan'
                 }
               />
             </View>
