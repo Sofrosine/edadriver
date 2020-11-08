@@ -25,7 +25,7 @@ export const getDetailRequestSwitchOrderAction = (id) => {
     dispatch(setLoadingAction(true));
     dispatch(getDetailRequestSwitchOrder());
     try {
-      const apiReq = await api(
+      const apiReq = await api( 
         'get',
         `order/detail-request-switch-driver?id=${id}`,
       );

@@ -73,8 +73,8 @@ const UploadButton = ({type = 'avatar', sectionType}) => {
                   uri: data.url,
                 },
                 title: 'Foto Upload',
-                width: 300,
-                height: 200,
+                width: 500,
+                height: 220,
               },
             ]}
             imageIndex={0}

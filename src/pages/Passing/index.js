@@ -65,6 +65,7 @@ const Passing = ({route, navigation}) => {
 
   useEffect(() => {
     dispatch(getDetailRequestSwitchOrderAction(id));
+    console.log('aiwkawk', data);
     const yo = setTimeout(() => {
       setUpdate(!update);
     }, 1000);
@@ -106,28 +107,33 @@ const Passing = ({route, navigation}) => {
               <View>
                 <Text style={styles.p2GrayRegular}>Nama Requester</Text>
                 <Gap height={4} />
-                <Text style={styles.p1Bold}>{data.requester.driver_name}</Text>
+                <Text style={styles.p1Bold}>
+                  {(data.requester && data.requester.driver_name) || ''}
+                </Text>
               </View>
             </View>
             <Gap height={16} />
             <ListDetailOrder
               title="Nama Penerima"
-              subtitle={data.order.receiver_name}
+              subtitle={data.order && data.order.receiver_name}
             />
             <Gap height={16} />
             <ListDetailOrder
               title="Nomor Handphone"
-              subtitle={data.order.receiver_phone}
+              subtitle={data.order && data.order.receiver_phone}
             />
             <Gap height={16} />
             <ListDetailOrder
               title="Alamat Penerima"
-              subtitle={data.order.receiver_address}
+              subtitle={data.order && data.order.receiver_address}
             />
             <Gap height={16} />
             <Button onPress={openMap} type="nude" text="Lihat Lokasi" />
             <Gap height={16} />
-            <ListDetailOrder title="Harga" subtitle={data.order.total_amount} />
+            <ListDetailOrder
+              title="Harga"
+              subtitle={data.order && data.order.total_amount}
+            />
             <Gap height={24} />
             <Button onPress={handleDecline} type="delete" text="Reject Order" />
             <Gap height={16} />

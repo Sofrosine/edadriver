@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import ImageView from 'react-native-image-view';
 import {useDispatch, useSelector} from 'react-redux';
 import {IMGMenuBackground} from '../../assets';
 import {
@@ -38,6 +39,7 @@ const Detail = ({route, navigation}) => {
     nominal: '',
     description: '',
   });
+  const [isDetail, setDetail] = useState(false);
   const {id} = route.params;
   const {uploadImageReducer} = useSelector((state) => state);
   const {data} = useSelector((state) => state.detailOrderReducer);
@@ -113,6 +115,7 @@ const Detail = ({route, navigation}) => {
 
   useEffect(() => {
     dispatch(getDetailOrderAction(id));
+    console.log('apapa', data);
     const yo = setTimeout(() => {
       setUpdate(!update);
     }, 1000);
@@ -153,9 +156,9 @@ const Detail = ({route, navigation}) => {
               <Image source={IMGMenuBackground} style={styles.avatar} />
               <Gap width={8} />
               <View>
-                <Text style={styles.p2GrayRegular}>Nama Driver</Text>
+                <Text style={styles.p2GrayRegular}>Nama Pengirim</Text>
                 <Gap height={4} />
-                <Text style={styles.p1Bold}>Ridwan M.</Text>
+                <Text style={styles.p1Bold}>{data.sender_name}</Text>
               </View>
             </View>
             <Gap height={16} />
@@ -193,17 +196,38 @@ const Detail = ({route, navigation}) => {
             <Gap height={16} />
             <Text style={styles.p2GrayRegular}>Foto Barang</Text>
             <Gap height={8} />
-            <Image
-              source={
-                details
-                  ? {uri: details[0].image.url}
-                  : {
-                      uri:
-                        'https://d2l12sz4ewcavz.cloudfront.net/assets/boxes/oversized_items/oversized_02-155efcabd68291d16f8fbb2376dea0dd69219898688e934490e21f6cb50eba30.jpg',
-                    }
-              }
-              style={styles.image}
+            <ImageView
+              images={[
+                {
+                  source: {
+                    uri: details && details[0].image.url,
+                  },
+                  title: 'Foto Upload',
+                  width: 500,
+                  height: 240,
+                },
+              ]}
+              imageIndex={0}
+              isVisible={isDetail}
+              animationType="fade"
+              onClose={() => setDetail(false)}
             />
+            {!isDetail && (
+              <TouchableOpacity onPress={() => setDetail(true)}>
+                <Image
+                  source={
+                    details
+                      ? {uri: details[0].image.url}
+                      : {
+                          uri:
+                            'https://d2l12sz4ewcavz.cloudfront.net/assets/boxes/oversized_items/oversized_02-155efcabd68291d16f8fbb2376dea0dd69219898688e934490e21f6cb50eba30.jpg',
+                        }
+                  }
+                  style={styles.image}
+                />
+              </TouchableOpacity>
+            )}
+
             <Gap height={16} />
             {/* {data.order_status === 'completed' && (
               <>
@@ -345,7 +369,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 200,
+    height: 130,
   },
   rowCenterBetween: {
     flexDirection: 'row',

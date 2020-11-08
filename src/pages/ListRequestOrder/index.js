@@ -25,38 +25,43 @@ const ListRequestOrder = ({navigation}) => {
         onPress={() => navigation.openDrawer()}
         title="List Request Order"
       />
-      <FlatList
-        contentContainerStyle={styles.content}
-        keyExtractor={(item) => item.id}
-        data={
-          !requestOrderReducer.data.request_orders
-            ? requestOrderReducer.data
-            : requestOrderReducer.data.request_orders.items
-        }
-        renderItem={({item}) =>
-          requestOrderReducer.loading ? (
-            <ActivityIndicator size={32} color={colors.secondary} />
-          ) : requestOrderReducer.error ? (
-            <Button
-              type="nude"
-              text="Reload data"
-              onPress={() => dispatch(requestOrderAction())}
-            />
-          ) : (
-            <CardRequestOrder item={item} />
-          )
-        }
-        ItemSeparatorComponent={() => <Gap height={24} />}
-        ListEmptyComponent={() =>
-          requestOrderReducer.loading ? (
-            <ActivityIndicator size={32} color={colors.secondary} />
-          ) : (
-            <View style={styles.center}>
-              <Text style={styles.p1MediumBlack}>Data Kosong</Text>
-            </View>
-          )
-        }
-      />
+      {requestOrderReducer.loading ? (
+        <View>
+          <Gap height={24} />
+          <ActivityIndicator size={32} color={colors.secondary} />
+        </View>
+      ) : (
+        <FlatList
+          contentContainerStyle={styles.content}
+          keyExtractor={(item) => item.id}
+          data={
+            !requestOrderReducer.data.request_orders
+              ? requestOrderReducer.data
+              : requestOrderReducer.data.request_orders.items
+          }
+          renderItem={({item}) =>
+            requestOrderReducer.error ? (
+              <Button
+                type="nude"
+                text="Reload data"
+                onPress={() => dispatch(requestOrderAction())}
+              />
+            ) : (
+              <CardRequestOrder item={item} />
+            )
+          }
+          ItemSeparatorComponent={() => <Gap height={24} />}
+          ListEmptyComponent={() =>
+            requestOrderReducer.loading ? (
+              <ActivityIndicator size={32} color={colors.secondary} />
+            ) : (
+              <View style={styles.center}>
+                <Text style={styles.p1MediumBlack}>Data Kosong</Text>
+              </View>
+            )
+          }
+        />
+      )}
     </View>
   );
 };
