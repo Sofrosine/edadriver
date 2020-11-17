@@ -85,7 +85,7 @@ const DrawerContent = (props) => {
               routeName={route.name}
             />
           );
-        })}
+        })} 
         <View style={styles.logout}>
           <TabDrawer logout icon={ICLogoutWhite} text="Logout" />
         </View>

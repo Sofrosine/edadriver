@@ -21,7 +21,7 @@ const TabDrawer = ({text, isActive, icon, routeName, logout}) => {
     }
   };
   return (
-    <TouchableOpacity
+    <TouchableOpacity 
       onPress={handleNavigation}
       style={styles.container(isActive)}>
       <Icon height={16} width={16} />

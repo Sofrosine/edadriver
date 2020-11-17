@@ -42,6 +42,12 @@ const Navbar = ({title, onPress, type}) => {
           text: 'Ya',
           onPress: async () => {
             dispatch(setLoadingAction(true));
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: 'Login'}],
+              }),
+            );
             const imei = await getData('imeiToken');
             try {
               const apiReq = await api('post', 'auth/logout', {
@@ -49,12 +55,6 @@ const Navbar = ({title, onPress, type}) => {
               });
               console.log('apiReq logout success', apiReq);
               AsyncStorage.removeItem('@user_token');
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [{name: 'Login'}],
-                }),
-              );
               ToastAndroid.show('Berhasil logout', 2000);
             } catch (error) {
               console.log('apiReq logout error', error);
