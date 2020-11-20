@@ -50,7 +50,7 @@ const Detail = ({route, navigation}) => {
     (state) => state.showNotificationAlertReducer,
   );
 
-  const openMap = () => {
+  const openMapSender = () => {
     var scheme =
       Platform.OS === 'ios'
         ? 'http://maps.apple.com/maps?daddr='
@@ -58,6 +58,17 @@ const Detail = ({route, navigation}) => {
     var url =
       scheme +
       `${Number(data.sender_latitude)},${Number(data.sender_longitude)}`;
+    console.log('urur', url);
+    Linking.openURL(url);
+  };
+  const openMapReceiver = () => {
+    var scheme =
+      Platform.OS === 'ios'
+        ? 'http://maps.apple.com/maps?daddr='
+        : 'http://maps.google.com/maps?daddr=';
+    var url =
+      scheme +
+      `${Number(data.receiver_latitude)},${Number(data.receiver_longitude)}`;
     console.log('urur', url);
     Linking.openURL(url);
   };
@@ -173,11 +184,18 @@ const Detail = ({route, navigation}) => {
             />
             <Gap height={16} />
             <ListDetailOrder
+              title="Alamat Pengirim"
+              subtitle={data.sender_address}
+            />
+            <Gap height={16} />
+            <Button onPress={openMapSender} type="nude" text="Lihat Lokasi" />
+            <Gap height={16} />
+            <ListDetailOrder
               title="Alamat Penerima"
               subtitle={data.receiver_address}
             />
             <Gap height={16} />
-            <Button onPress={openMap} type="nude" text="Lihat Lokasi" />
+            <Button onPress={openMapReceiver} type="nude" text="Lihat Lokasi" />
             <Gap height={16} />
             <ListDetailOrder
               title="Nama Barang"

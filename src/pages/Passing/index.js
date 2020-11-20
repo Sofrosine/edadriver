@@ -49,7 +49,7 @@ const Passing = ({route, navigation}) => {
     dispatch(declineRequestDriverAction(formData, navigation));
   };
 
-  const openMap = () => {
+  const openMapSender = () => {
     var scheme =
       Platform.OS === 'ios'
         ? 'http://maps.apple.com/maps?daddr='
@@ -58,6 +58,19 @@ const Passing = ({route, navigation}) => {
       scheme +
       `${Number(data.order.sender_latitude)},${Number(
         data.order.sender_longitude,
+      )}`;
+    console.log('urur', url);
+    Linking.openURL(url);
+  };
+  const openMapReceiver = () => {
+    var scheme =
+      Platform.OS === 'ios'
+        ? 'http://maps.apple.com/maps?daddr='
+        : 'http://maps.google.com/maps?daddr=';
+    var url =
+      scheme +
+      `${Number(data.order.receiver_latitude)},${Number(
+        data.order.receiver_longitude,
       )}`;
     console.log('urur', url);
     Linking.openURL(url);
@@ -124,11 +137,18 @@ const Passing = ({route, navigation}) => {
             />
             <Gap height={16} />
             <ListDetailOrder
+              title="Alamat Pengirim"
+              subtitle={data.sender_address}
+            />
+            <Gap height={16} />
+            <Button onPress={openMapSender} type="nude" text="Lihat Lokasi" />
+            <Gap height={16} />
+            <ListDetailOrder
               title="Alamat Penerima"
               subtitle={data.order && data.order.receiver_address}
             />
             <Gap height={16} />
-            <Button onPress={openMap} type="nude" text="Lihat Lokasi" />
+            <Button onPress={openMapReceiver} type="nude" text="Lihat Lokasi" />
             <Gap height={16} />
             <ListDetailOrder
               title="Harga"
